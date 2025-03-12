@@ -1,34 +1,56 @@
-import { SSLService } from "../../../../SSL/ssl.service"
 
 
-const validatePayment = async (payload:any)=>{
-    if(!payload || !payload.status || !(payload.status=== "VALID")){
+import { SSLService } from "../../../../SSL/ssl.service";
 
-        return {message : "invalid payment"
 
+
+const initPayment = async (data:any,appointmentId:string) => {
+  
+    // init payment data will be after getting data to search appointment id
+    const initPaymentData = {
+        amount: 100,
+        transactionId: "chalai den", // Fixed typo
+        name: "abdul alim",
+        email: "alimsujon12@gmail.com",
+        address: "mohakhali",
+        phoneNumber: "231897683",
+    };
+
+
+    const result = await SSLService.initPayment(initPaymentData);
+   
+    return {paymentUrl:result.GatewayPageURL}
+   };
+
+
+   
+const validatePayment = async (payload: any) => {
+    if (!payload || !payload.status || !(payload.status === "VALID")) {
+        return { message: "invalid payment" };
     }
-  }
-
- const response = await paymentService.validatePayment(payload)
-
-  // should update where it is need
-
-//     if(response.status !== "VALID"){
     
-//         return {message : "payment failed"
+    const response = await SSLService.validatePaymentIpn(payload)
+
+    // after checking this ,we can edit te database where we d
+
+
+        if(response.tran_id){
+            console.log("mama it working")
+        }
+          if(response.status !== "VALID"){
+        
+            return {message : "payment failed"
+        
+            }   
+        
+          }
     
-//         }
 
-// }
-}
+   
+};
 
-const initPayment = async ()=>{
-
-    const result = await SSLService.initPayment()
-
-}
 
 export const paymentService = {
-    initPayment,
-    validatePayment
-}
+    initPayment,validatePayment
+
+};
